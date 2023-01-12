@@ -26,7 +26,12 @@ const imageStorageService = {
         AWS.config.accessKeyId = process.env.AWS_ACCESS_KEY;
         AWS.config.secretAccessKey = process.env.AWS_SECRET_KEY;
         AWS.config.region = process.env.AWS_REGION;
-        imageStorage = new AmazonS3StorageProvider(new AWS.S3(), process.env.AWS_BUCKET);
+        if (process.env.AWS_HOST){
+          AWS.config.s3 = { endpoint: process.env.AWS_HOST };
+          AWS.config.s3BucketEndpoint = true;
+          AWS.config.s3ForcePathStyle = true;
+        }
+        imageStorage = new AmazonS3StorageProvider(new AWS.S3(), winstonLogger, process.env.AWS_BUCKET);
         break;
       case "couchdb":
         const protocol = process.env.COUCH_DB_PROTOCOL;
